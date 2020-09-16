@@ -1,6 +1,6 @@
 ## Freenove Ultimate Starter Kit for Raspberry Pi
 
-> A kit for learnning Raspberry Pi with C, Python and Java code.
+> A kit for learning Raspberry Pi with C, Python and Java code.
 
 ### Download
 
@@ -8,7 +8,7 @@
 
 	Run following command to download all the files in this repository.
 
-	`git clone https://github.com/Freenove/Freenove_Ultimate_Starter_Kit_for_Raspberry_Pi.git`
+	`git clone --depth 1 https://github.com/Freenove/Freenove_Ultimate_Starter_Kit_for_Raspberry_Pi.git`
 
 * **Manually download in browser**
 
