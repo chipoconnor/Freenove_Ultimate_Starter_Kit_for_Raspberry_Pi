@@ -1,8 +1,11 @@
 /**********************************************************************
 * Filename    : DHT.hpp
-* Description : DHT Temperature & Humidity Sensor library for Raspberry
+* Description : DHT Temperature & Humidity Sensor library for Raspberry.
+                Used for Raspberry Pi.
+*               Program transplantation by Freenove.
 * Author      : freenove
-* modification: 2018/03/07
+* modification: 2020/10/16
+* Reference   : https://github.com/RobTillaart/Arduino/tree/master/libraries/DHTlib
 **********************************************************************/
 #ifndef _DHT_H_
 #define _DHT_H_
@@ -17,14 +20,16 @@
 #define DHTLIB_ERROR_TIMEOUT    -2
 #define DHTLIB_INVALID_VALUE    -999
 
-#define DHTLIB_DHT11_WAKEUP     18
+#define DHTLIB_DHT11_WAKEUP     20
 #define DHTLIB_DHT_WAKEUP       1
 
 #define DHTLIB_TIMEOUT          100
 
 class DHT{      
     public:
+        DHT();
         double humidity,temperature;    //use to store temperature and humidity data read
+        int readDHT11Once(int pin);     //read DHT11
         int readDHT11(int pin);     //read DHT11
     private:
         uint8_t bits[5];    //Buffer to receiver data

@@ -3,7 +3,7 @@
 # Filename    : Freenove_DHT.py
 # Description :	DHT Temperature & Humidity Sensor library for Raspberry
 # Author      : freenove
-# modification: 2018/08/03
+# modification: 2020/10/16
 ########################################################################
 import RPi.GPIO as GPIO
 import time
@@ -29,19 +29,32 @@ class DHT(object):
 		mask = 0x80
 		idx = 0
 		self.bits = [0,0,0,0,0]
+		# Clear sda
 		GPIO.setup(pin,GPIO.OUT)
+		GPIO.output(pin,GPIO.HIGH)
+		time.sleep(0.5)
+		# start signal
 		GPIO.output(pin,GPIO.LOW)
 		time.sleep(wakeupDelay)
 		GPIO.output(pin,GPIO.HIGH)
-		#time.sleep(40*0.000001)
+		# time.sleep(0.000001)
 		GPIO.setup(pin,GPIO.IN)
 		
 		loopCnt = self.DHTLIB_TIMEOUT
+		# Waiting echo
+		t = time.time()
+		while True:
+			if (GPIO.input(pin) == GPIO.LOW):
+				break
+			if((time.time() - t) > loopCnt):
+				return self.DHTLIB_ERROR_TIMEOUT
+		# Waiting echo low level end
 		t = time.time()
 		while(GPIO.input(pin) == GPIO.LOW):
 			if((time.time() - t) > loopCnt):
 				#print ("Echo LOW")
 				return self.DHTLIB_ERROR_TIMEOUT
+		# Waiting echo high level end
 		t = time.time()
 		while(GPIO.input(pin) == GPIO.HIGH):
 			if((time.time() - t) > loopCnt):
@@ -70,7 +83,7 @@ class DHT(object):
 		GPIO.output(pin,GPIO.HIGH)
 		return self.DHTLIB_OK
 	#Read DHT sensor, analyze the data of temperature and humidity
-	def readDHT11(self):
+	def readDHT11Once(self):
 		rv = self.readSensor(self.pin,self.DHTLIB_DHT11_WAKEUP)
 		if (rv is not self.DHTLIB_OK):
 			self.humidity = self.DHTLIB_INVALID_VALUE
@@ -82,6 +95,15 @@ class DHT(object):
 		if(self.bits[4] is not sumChk):
 			return self.DHTLIB_ERROR_CHECKSUM
 		return self.DHTLIB_OK
+	def readDHT11(self):
+		result = self.DHTLIB_INVALID_VALUE
+		for i in range(0,15):
+			result = self.readDHT11Once()
+			if result == self.DHTLIB_OK:
+				return self.DHTLIB_OK
+			time.sleep(0.1)
+		return result
+		
 		
 def loop():
 	dht = DHT(11)
